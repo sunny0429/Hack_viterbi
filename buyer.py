@@ -15,7 +15,7 @@ import base64
 from Crypto.Cipher import AES
 import threading
 import requests
-
+import datetime
 # Establish Connection
 
 # Connect to the tangle
@@ -27,6 +27,12 @@ server = ""
 encrypt_key = RSA.generate(2048)
 signature_key = RSA.generate(2048, e=65537)
 time = 0
+rate = ""
+spot=""
+lat=""
+lng=""
+mac_id="f0:18:98:3e:ee:f9"
+model_id="Tesla S3"
 # Set values
 invoice_address = iota_api.get_new_addresses(count=1)
 invoice_address = str(invoice_address['addresses'][0].address)
@@ -166,7 +172,8 @@ def dataTransfer():
     filename = data_type + ".txt"
     f = open(filename, "a")
     remaining = quantity
-
+    global time,rate,spot,lat,lng
+   
     print "-------Receiving Data Starts-------"
     while counter <= quantity:
         message = server.recv(2048)
@@ -215,7 +222,7 @@ def dataTransfer():
         # print pprint.pprint(json.loads(json_string))
 
         counter = counter + 1
-    datas = {"data":"done"}
+    datas = {"duration":time,"rate":rate,"spot":spot,"lat":lat,"long":lng,"timestamp":str(datetime.datetime.now())}
     datas = json.dumps(datas)
     r = requests.post(url = 'http://127.0.0.1:8083/update', data = datas) 
     print "-------Receiving Data Ends--------"
@@ -230,9 +237,9 @@ def prepareOrderData(data_type, quantity, currency):
 
     data['signature-key'] = signature_key.publickey().exportKey('OpenSSH')
     data['encryption-key'] = encrypt_key.publickey().exportKey('OpenSSH')
-
     data['address'] = invoice_address
-
+    data['model_id'] = model_id
+    data['mac_id'] = mac_id
     return data
 
 def placeOrder(available_data):
@@ -285,14 +292,19 @@ def receiveMenu():
     Receive the Menu and other details from the Seller
     :return: Returns the Menu
     """
-    global payment_address, payment_granularity, signature_required, seller_public_key,time,data_test
+    global payment_address, payment_granularity, signature_required, seller_public_key,time,rate,spot,lat,lng
 
     message = server.recv(2048)
     message = json.loads(message)
     data = json.loads(str(message['data']))
     print('in menu')
     pprint.pprint(data)
-    time = data['time']
+    time = data['duration']
+    rate = data['rate']
+    spot = data['spot']
+    lat = data['lat']
+    lng = data['long']
+
     payment_granularity = int(data['payment-granularity'])
     payment_address = iota.Address(str(data['payment-address']))
     signature_required = int(data['signature-required'])

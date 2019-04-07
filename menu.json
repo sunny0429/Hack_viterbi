@@ -2,7 +2,11 @@
   "menu": {
     "gas": "2"
   },
-  "time":0.5,
+  "duration":0.5,
+  "rate":"$ 5",
+  "spot":"H230",
+  "lat":"-118.261707",
+  "long":"34.039851", 
   "default-currency": "iota",
   "list-of-currencies": ["iota", "bitcoin", "ethereum"]
 }

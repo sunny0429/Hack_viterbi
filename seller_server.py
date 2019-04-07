@@ -6,7 +6,7 @@ import os
 import requests
 
 
-app= Flask(__name__,template_folder='public')
+app= Flask(__name__,template_folder='.')
 app.config.from_object(__name__)
 
 data =""
@@ -20,7 +20,7 @@ app.secret_key = 'my key'
 @app.route('/', methods=['GET'])
 def index():
 	
-	return render_template('index.html')
+	return render_template('index3.html')
 
 
 @app.route('/seller', methods=['GET'])
@@ -32,7 +32,7 @@ def seller():
 def update():
 	global data
 	print('SUNNNNNNNNNYYYYYYYY',request.data)
-	data = data+request.data
+	data = request.data
 	#r = requests.get(url = 'http://127.0.0.1:8082/shows', data = request.data) 
 		
 	return make_response(jsonify({'success': 'success'}), 200)

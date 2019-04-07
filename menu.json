@@ -1,0 +1,8 @@
+{
+  "menu": {
+    "gas": "2"
+  },
+  "time":0.5,
+  "default-currency": "iota",
+  "list-of-currencies": ["iota", "bitcoin", "ethereum"]
+}
